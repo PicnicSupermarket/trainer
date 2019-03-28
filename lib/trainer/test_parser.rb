@@ -48,7 +48,7 @@ module Trainer
         File.write(suffixed_to_path, tp.to_junit)
         puts "Successfully generated '#{suffixed_to_path}'"
 
-        return_hash[to_path] = tp.tests_successful?
+        return_hash[suffixed_to_path] = tp.tests_successful?
       end
       return_hash
     end

@@ -31,7 +31,12 @@ module Trainer
         c.action do |args, options|
           options = FastlaneCore::Configuration.create(Trainer::Options.available_options, options.__hash__)
           FastlaneCore::PrintTable.print_values(config: options, title: "Summary for trainer #{Trainer::VERSION}") if $verbose
-          Trainer::TestParser.auto_convert(options)
+          results = Trainer::TestParser.auto_convert(options)
+
+          fail_build = options[:fail_build]
+          results.each do |path, test_successful|
+            FastlaneCore::UI.test_failure!("Unit tests failed") if fail_build && !test_successful
+          end
         end
       end
 
