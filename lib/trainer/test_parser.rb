@@ -13,7 +13,16 @@ module Trainer
                                              title: "Summary for trainer #{Trainer::VERSION}")
 
       containing_dir = config[:path]
+      # Xcode < 10
+      files = Dir["#{containing_dir}/**/Logs/Test/*_TestSummaries.plist"]
+      files += Dir["#{containing_dir}/Test/*_TestSummaries.plist"]
+      files += Dir["#{containing_dir}/*_TestSummaries.plist"]
       files = Dir["#{containing_dir}/**/*_TestSummaries.plist"]
+      # Xcode 10
+      files += Dir["#{containing_dir}/**/Logs/Test/*.xcresult/*_TestSummaries.plist"]
+      files += Dir["#{containing_dir}/Test/*.xcresult/*_TestSummaries.plist"]
+      files += Dir["#{containing_dir}/*.xcresult/*_TestSummaries.plist"]
+      files += Dir["#{containing_dir}/**/*_TestSummaries.plist"]
       files += Dir[containing_dir] if containing_dir.end_with?(".plist") # if it's the exact path to a plist file
 
       if files.empty?
