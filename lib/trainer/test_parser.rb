@@ -30,7 +30,7 @@ module Trainer
       end
 
       return_hash = {}
-      files.each_with_index do |path, index|
+      files.each do |path|
         if config[:output_directory]
           FileUtils.mkdir_p(config[:output_directory])
           filename = File.basename(path).gsub(".plist", config[:extension])
@@ -41,9 +41,13 @@ module Trainer
 
         tp = Trainer::TestParser.new(path)
 
+        device_name = tp.data[0][:run_destination][:name]
+        os_version = tp.data[0][:run_destination][:target_device][:operating_system_version]
+        suffix = "#{device_name}_#{os_version}".gsub(" ", "_")
+
         suffixed_to_path = to_path
         file_extension = File.extname(suffixed_to_path)
-        suffixed_to_path = suffixed_to_path.reverse.sub(file_extension.reverse, ("#{index}#{file_extension}").reverse).reverse
+        suffixed_to_path = suffixed_to_path.reverse.sub(file_extension.reverse, ("_#{suffix}#{file_extension}").reverse).reverse
         
         File.write(suffixed_to_path, tp.to_junit)
         puts "Successfully generated '#{suffixed_to_path}'"
